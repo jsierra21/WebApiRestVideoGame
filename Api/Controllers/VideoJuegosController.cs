@@ -1,54 +1,44 @@
 ﻿using Application.VideoStore.Commands;
-using Application.VideoStore.Queries; // Importar la consulta
+using Application.VideoStore.Queries;
 using Core.DTOs;
 using MediatR;
+using Microsoft.AspNetCore.Authorization; // Importar el espacio de nombres para autorización
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
-// Asegúrate de incluir el espacio de nombres correspondiente
 
 namespace Api.Controllers
 {
     [Produces("application/json")]
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize] // Asegura que todos los métodos requieren un token JWT
     public class VideoJuegosController : ControllerBase
     {
         private readonly IMediator _mediator;
-        private readonly IMemoryCache _cache; // Añade una variable para la caché
+        private readonly IMemoryCache _cache;
 
-
-        // Constructor que inyecta IMediator
         public VideoJuegosController(IMediator mediator, IMemoryCache cache)
         {
             _mediator = mediator;
-            _cache = cache; // Inicializa la caché
-
+            _cache = cache;
         }
 
-
-        // Método para listar los videojuegos registrados con caché en memoria
         [HttpGet]
         [Route("listar")]
         public async Task<IActionResult> ListarVideoJuegos()
         {
-            // Define la clave de caché
             const string cacheKey = "videojuegosList";
 
-            // Intenta obtener los videojuegos de la caché
             if (!_cache.TryGetValue(cacheKey, out List<VideoJuegosEntity> videojuegos))
             {
-                // Si no están en caché, envía la consulta al mediador para obtener los videojuegos
                 videojuegos = await _mediator.Send(new ListarVideoJuegosQuery());
 
-                // Configura las opciones de la caché
                 var cacheEntryOptions = new MemoryCacheEntryOptions
                 {
-                    // Establece el tiempo de duración de la caché
-                    AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10), //  10 minutos
-                    SlidingExpiration = TimeSpan.FromMinutes(5) // 5 minutos
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10),
+                    SlidingExpiration = TimeSpan.FromMinutes(5)
                 };
 
-                // Guarda los videojuegos en caché
                 _cache.Set(cacheKey, videojuegos, cacheEntryOptions);
             }
 
@@ -63,48 +53,42 @@ namespace Api.Controllers
 
             if (result == null)
             {
-                return NotFound(); // Si no se encuentra el videojuego
-            }
-
-            return Ok(result); 
-        }
-
-
-        // Método para registrar un videojuego
-        [HttpPost]
-        [Route("registrar")]
-        public async Task<IActionResult> RegistrarVideoJuego([FromBody] VideoJuegosCommand command)
-        {
-            var result = await _mediator.Send(command); // Envía el comando de registro
-
-            if (result.Estado == 400)
-            {
-                return BadRequest(result); // Devuelve un error 400 si falla
+                return NotFound();
             }
 
             return Ok(result);
         }
 
-        // Método para actualizar un videojuego
+        [HttpPost]
+        [Route("registrar")]
+        public async Task<IActionResult> RegistrarVideoJuego([FromBody] VideoJuegosCommand command)
+        {
+            var result = await _mediator.Send(command);
+
+            if (result.Estado == 400)
+            {
+                return BadRequest(result);
+            }
+
+            return Ok(result);
+        }
+
         [HttpPut]
         [Route("actualizar/{id}")]
         public async Task<IActionResult> ActualizarVideoJuego(int id, [FromBody] VideoJuegosActualizarCommand command)
         {
-            command.video_juego_id = id; // Asigna el ID del videojuego al comando
+            command.video_juego_id = id;
 
-            var result = await _mediator.Send(command); // Envía el comando de actualización
+            var result = await _mediator.Send(command);
 
             if (result.Estado == 400)
             {
-                return BadRequest(result); // Devuelve un error 400 si falla
+                return BadRequest(result);
             }
 
-            return Ok(result); // Devuelve el resultado si la actualización fue exitosa
+            return Ok(result);
         }
 
-
-
-        // Método para eliminar un videojuego
         [HttpDelete]
         [Route("eliminar/{videojuegoID}")]
         public async Task<IActionResult> EliminarVideoJuego(int videojuegoID)
@@ -113,10 +97,10 @@ namespace Api.Controllers
 
             if (result == null)
             {
-                return NotFound(); // Devuelve 404 si el videojuego no fue encontrado
+                return NotFound();
             }
 
-            return Ok(result); // Devuelve el videojuego eliminado
+            return Ok(result);
         }
 
         [HttpGet]
@@ -131,6 +115,5 @@ namespace Api.Controllers
 
             return Ok(result);
         }
-
     }
 }

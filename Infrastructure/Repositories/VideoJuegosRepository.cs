@@ -150,7 +150,9 @@ namespace Infrastructure.Repositories
 
         public async Task<VideoJuegosEntity> EliminarVideoJuego(int videojuegoID)
         {
-            var videojuego = await _context.VideoJuegos
+            try
+            {
+                var videojuego = await _context.VideoJuegos
                 .FirstOrDefaultAsync(v => v.VideojuegoID == videojuegoID);
 
             if (videojuego == null)
@@ -162,6 +164,11 @@ namespace Infrastructure.Repositories
             await _context.SaveChangesAsync();
 
             return videojuego; // Devuelve el videojuego eliminado
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al obtener los videojuegos paginados: " + ex.Message);
+            }
         }
 
         public async Task<PaginacionResponse<VideoJuegosEntity>> ListarVideoJuegosPaginados(int pageNumber, int pageSize)
