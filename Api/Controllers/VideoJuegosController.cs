@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization; // Importar el espacio de nombres para
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
+using System.Text;
 
 namespace Api.Controllers
 {
@@ -116,6 +117,25 @@ namespace Api.Controllers
             });
 
             return Ok(result);
+        }
+
+
+        [HttpGet("ranking/csv")]
+        public async Task<IActionResult> GenerarRankingCsv(int top = 20)
+        {
+            try
+            {
+                var result = await _mediator.Send(new GenerarRankingCsvQuery(top));
+                return File(Encoding.UTF8.GetBytes(result), "text/csv", "ranking.csv");
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
     }
 }

@@ -11,6 +11,7 @@ namespace Core.Interfaces
         Task<ResponseDTO> EliminarVideoJuegoService(int videojuegoID);
         Task<int> CountVideoJuegos(); // Método para contar total de videojuegos
         Task<PaginacionResponse<VideoJuegosEntity>> ListarVideoJuegosPaginados(int pagina, int registrosPorPagina); // Método para listar videojuegos paginados
+
     }
 
 }

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Core.Entities;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 [Table("Videojuegos")]
@@ -38,4 +39,6 @@ public class VideoJuegosEntity
     [Column("Usuario")]
     [MaxLength(50)]
     public string Usuario { get; set; }
+
+
 }

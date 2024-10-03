@@ -1,6 +1,7 @@
 ﻿
 
 using Core.DTOs;
+using Core.Entities;
 
 namespace Core.Interfaces.store
 {
@@ -13,6 +14,7 @@ namespace Core.Interfaces.store
         Task<VideoJuegosEntity> EliminarVideoJuego(int videojuegoID); // Acepta un objeto UsuarioEntity como parámetro
         Task<int> CountVideoJuegos(); // Método para contar total de videojuegos
         Task<PaginacionResponse<VideoJuegosEntity>> ListarVideoJuegosPaginados(int pageNumber, int pageSize);
+        Task<List<VideojuegosCalificaciones>> ObtenerTodosVideoJuegosAsync();
 
     }
 }

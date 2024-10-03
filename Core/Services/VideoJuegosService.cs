@@ -1,6 +1,7 @@
 ﻿using Core.DTOs;
 using Core.Interfaces;
 using Core.Interfaces.store;
+using System.Text;
 
 namespace Core.Services
 {

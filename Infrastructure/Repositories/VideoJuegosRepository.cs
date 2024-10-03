@@ -1,4 +1,5 @@
 ﻿using Core.DTOs; // Importa los DTOs utilizados para las operaciones
+using Core.Entities;
 using Core.Exceptions; // Importa las excepciones personalizadas
 using Core.Interfaces.store; // Importa la interfaz del repositorio
 using Infrastructure.Data; // Importa el contexto de la base de datos
@@ -213,6 +214,13 @@ namespace Infrastructure.Repositories
         public async Task<int> CountVideoJuegos()
         {
             return await _context.VideoJuegos.CountAsync(); // Cuenta el total de videojuegos en la base de datos
+        }
+
+        public async Task<List<VideojuegosCalificaciones>> ObtenerTodosVideoJuegosAsync()
+        {
+            // Retorna todos los videojuegos de la base de datos
+            return await _context.VideojuegosCalificaciones.ToListAsync();
+
         }
 
 
