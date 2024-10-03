@@ -60,5 +60,5 @@ namespace Api.Responses
         public int? NoPagina { get; set; }
     }
 
- 
+
 }

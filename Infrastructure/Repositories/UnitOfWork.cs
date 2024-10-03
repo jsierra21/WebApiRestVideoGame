@@ -2,11 +2,7 @@
 using Core.Interfaces.store;
 using Core.Interfaces.usuario;
 using Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories
 {
@@ -28,7 +24,7 @@ namespace Infrastructure.Repositories
         private readonly Dictionary<Type, object> _storeProcedureRepositories = new Dictionary<Type, object>();
 
 
-        public UnitOfWork(DbModelContext context,IConfiguration configuration)
+        public UnitOfWork(DbModelContext context, IConfiguration configuration)
         {
             _context = context;
             _configuration = configuration;

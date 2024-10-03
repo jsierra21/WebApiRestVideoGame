@@ -2,7 +2,6 @@
 using Application.VideoStore.Queries; // Importar la consulta
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 
 namespace Api.Controllers
 {
@@ -43,6 +42,20 @@ namespace Api.Controllers
             var result = await _mediator.Send(new ListarVideoJuegosQuery());
 
             return Ok(result); // Devuelve los resultados en formato JSON
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> ObtenerVideoJuegoPorId(int id)
+        {
+            var query = new ObtenerVideoJuegoPorIdQuery(id);
+            var result = await _mediator.Send(query);
+
+            if (result == null)
+            {
+                return NotFound(); // Si no se encuentra el videojuego
+            }
+
+            return Ok(result); // Devuelve el videojuego encontrado
         }
     }
 }

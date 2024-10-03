@@ -1,7 +1,6 @@
 ﻿
 
 using Core.DTOs;
-using Core.Entities;
 
 namespace Core.Interfaces.store
 {
@@ -9,6 +8,8 @@ namespace Core.Interfaces.store
     {
         Task<VideoJuegosEntity> RegistrarVideoJuego(VideoJuegosDto video); // Acepta un objeto UsuarioEntity como parámetro
         Task<List<VideoJuegosEntity>> ListarVideoJuegos();
+        Task<VideoJuegosEntity> ObtenerVideoJuegoPorIdService(int videojuegoID);
+
 
 
     }

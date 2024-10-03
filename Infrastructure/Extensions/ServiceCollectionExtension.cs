@@ -1,8 +1,4 @@
-﻿using Core.Interfaces;
-using Core.Services;
-using Infrastructure.Data;
-using Infrastructure.Repositories;
-using Microsoft.AspNetCore.Http;
+﻿using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -42,7 +38,7 @@ namespace Infrastructure.Extensions
 
                 doc.AddSecurityDefinition(configuration["Swagger:SecurityName"], new OpenApiSecurityScheme
                 {
-                    Type = SecuritySchemeType.ApiKey,                    
+                    Type = SecuritySchemeType.ApiKey,
                     In = ParameterLocation.Header,
                     Name = configuration["Swagger:HeaderName"],
                     Description = configuration["Swagger:DescriptionToken"],

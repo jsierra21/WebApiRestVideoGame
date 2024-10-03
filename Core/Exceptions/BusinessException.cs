@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Core.Exceptions
+﻿namespace Core.Exceptions
 {
     public class BusinessException : Exception
     {

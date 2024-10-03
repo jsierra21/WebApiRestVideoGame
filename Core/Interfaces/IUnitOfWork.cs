@@ -11,7 +11,7 @@ namespace Core.Interfaces
     /// </summary>
     public interface IUnitOfWork : IDisposable
     {
-        
+
         IUsuarioRepository UsuarioRepository { get; }
         IVideoJuegosRepository VideoJuegosRepository { get; }
 

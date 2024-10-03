@@ -1,5 +1,4 @@
 ﻿using Core.DTOs;
-using Core.Entities;
 using Core.Interfaces;
 
 namespace Core.Services
@@ -12,7 +11,7 @@ namespace Core.Services
         {
             _unitOfWork = unitOfWork;
         }
-    
+
         public async Task<ResponseDTO> RegistrarVideoJuegoService(VideoJuegosDto dto)
         {
             ResponseDTO response = new();
@@ -47,6 +46,11 @@ namespace Core.Services
         public async Task<List<VideoJuegosEntity>> ListarVideoJuegosService()
         {
             return await _unitOfWork.VideoJuegosRepository.ListarVideoJuegos();
+        }
+
+        public async Task<VideoJuegosEntity> ObtenerVideoJuegoPorIdService(int videojuegoID)
+        {
+            return await _unitOfWork.VideoJuegosRepository.ObtenerVideoJuegoPorIdService(videojuegoID);
         }
 
     }

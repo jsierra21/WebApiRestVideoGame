@@ -1,5 +1,4 @@
 ﻿using Core.DTOs;
-using Core.Entities;
 
 namespace Core.Interfaces
 {
@@ -7,6 +6,8 @@ namespace Core.Interfaces
     {
         Task<ResponseDTO> RegistrarVideoJuegoService(VideoJuegosDto dto);
         Task<List<VideoJuegosEntity>> ListarVideoJuegosService();
+        Task<VideoJuegosEntity> ObtenerVideoJuegoPorIdService(int videojuegoID);
+
 
     }
 }

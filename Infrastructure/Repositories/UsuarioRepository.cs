@@ -5,8 +5,6 @@ using Core.Interfaces.usuario;
 using Infrastructure.Data;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Text;
 
 namespace Infrastructure.Repositories
 {

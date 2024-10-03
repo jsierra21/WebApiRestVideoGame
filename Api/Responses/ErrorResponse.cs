@@ -1,5 +1,4 @@
 ﻿using Core.ModelResponse;
-using System.Collections.Generic;
 
 namespace Api.Responses
 {

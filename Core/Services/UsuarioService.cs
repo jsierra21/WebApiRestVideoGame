@@ -12,7 +12,7 @@ namespace Core.Services
         {
             _unitOfWork = unitOfWork;
         }
-    
+
         public async Task<ResponseDTO> RegistrarUsuarioNotificacion(UsuarioDto notificationModel)
         {
             ResponseDTO response = new();
