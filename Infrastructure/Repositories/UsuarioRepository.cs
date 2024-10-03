@@ -42,7 +42,7 @@ namespace Infrastructure.Repositories
                 };
 
                 // Ejecutar el procedimiento almacenado para registrar el usuario
-                await _context.Database.ExecuteSqlRawAsync("EXEC [dbo].[RegistrarUserSp] @Usr_nombre_usuario, @Usr_correo_electronico, @Usr_Password", parameters);
+                await _context.Database.ExecuteSqlRawAsync("EXEC [dbo].[SpRegistrarUser] @Usr_nombre_usuario, @Usr_correo_electronico, @Usr_Password", parameters);
 
                 // Crear y devolver una nueva instancia de UsuarioEntity
                 var usuario = new UsuarioEntity
