@@ -2,6 +2,8 @@
 using Application.VideoStore.Queries; // Importar la consulta
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
+// Asegúrate de incluir el espacio de nombres correspondiente
 
 namespace Api.Controllers
 {
@@ -11,11 +13,15 @@ namespace Api.Controllers
     public class VideoJuegosController : ControllerBase
     {
         private readonly IMediator _mediator;
+        private readonly IMemoryCache _cache; // Añade una variable para la caché
+
 
         // Constructor que inyecta IMediator
-        public VideoJuegosController(IMediator mediator)
+        public VideoJuegosController(IMediator mediator, IMemoryCache cache)
         {
             _mediator = mediator;
+            _cache = cache; // Inicializa la caché
+
         }
 
         // Método para registrar un videojuego
@@ -25,23 +31,41 @@ namespace Api.Controllers
         {
             var result = await _mediator.Send(command); // Envía el comando de registro
 
-            if (result.Estado == 400) // Verifica si hubo un error
+            if (result.Estado == 400)
             {
                 return BadRequest(result); // Devuelve un error 400 si falla
             }
 
-            return Ok(result); // Devuelve el resultado en caso de éxito
+            return Ok(result); 
         }
 
-        // Método para listar los videojuegos registrados
+        // Método para listar los videojuegos registrados con caché en memoria
         [HttpGet]
         [Route("listar")]
         public async Task<IActionResult> ListarVideoJuegos()
         {
-            // Envía la consulta al mediador para obtener los videojuegos
-            var result = await _mediator.Send(new ListarVideoJuegosQuery());
+            // Define la clave de caché
+            const string cacheKey = "videojuegosList";
 
-            return Ok(result); // Devuelve los resultados en formato JSON
+            // Intenta obtener los videojuegos de la caché
+            if (!_cache.TryGetValue(cacheKey, out List<VideoJuegosEntity> videojuegos))
+            {
+                // Si no están en caché, envía la consulta al mediador para obtener los videojuegos
+                videojuegos = await _mediator.Send(new ListarVideoJuegosQuery());
+
+                // Configura las opciones de la caché
+                var cacheEntryOptions = new MemoryCacheEntryOptions
+                {
+                    // Establece el tiempo de duración de la caché
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10), //  10 minutos
+                    SlidingExpiration = TimeSpan.FromMinutes(5) // 5 minutos
+                };
+
+                // Guarda los videojuegos en caché
+                _cache.Set(cacheKey, videojuegos, cacheEntryOptions);
+            }
+
+            return Ok(videojuegos);
         }
 
         [HttpGet("{id}")]
@@ -55,7 +79,7 @@ namespace Api.Controllers
                 return NotFound(); // Si no se encuentra el videojuego
             }
 
-            return Ok(result); // Devuelve el videojuego encontrado
+            return Ok(result); 
         }
     }
 }

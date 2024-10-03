@@ -21,11 +21,20 @@ namespace Infrastructure.Repositories
         {
             try
             {
+                // Validar el DTO utilizando FluentValidation
+                var validator = new VideoJuegosDtoValidator();
+                var validationResult = await validator.ValidateAsync(dto);
+
+                if (!validationResult.IsValid)
+                {
+                    // Lanzar excepción si hay errores de validación
+                    throw new BusinessException(string.Join(", ", validationResult.Errors.Select(e => e.ErrorMessage)));
+                }
+
                 // Validar si el videojuego ya está registrado en la base de datos
                 var videoExistente = await _context.VideoJuegos
-                    .FirstOrDefaultAsync(v => v.Nombre == dto.Nombre);
+                    .FirstOrDefaultAsync(v => v.Nombre == dto.nombre);
 
-                // Si el videojuego ya existe, lanzar una excepción personalizada
                 if (videoExistente != null)
                 {
                     throw new BusinessException("El Videojuego ya está registrado.");
@@ -34,12 +43,12 @@ namespace Infrastructure.Repositories
                 // Crear una nueva entidad de videojuego con los datos del DTO
                 var video = new VideoJuegosEntity
                 {
-                    Nombre = dto.Nombre,
-                    Compania = dto.Compania,
-                    AnioLanzamiento = dto.AnioLanzamiento,
-                    Precio = dto.Precio,
-                    PuntajePromedio = 0m, // Valor inicial por defecto para puntaje promedio
-                    Usuario = dto.Usuario, // Usuario que registra el videojuego
+                    Nombre = dto.nombre,
+                    Compania = dto.compania,
+                    AnioLanzamiento = dto.anio_lanzamiento,
+                    Precio = dto.precio,
+                    PuntajePromedio = dto.puntaje_promedio, // Valor inicial por defecto para puntaje promedio
+                    Usuario = dto.usuario, // Usuario que registra el videojuego
                     FechaActualizacion = DateTime.Now // Asigna la fecha y hora actual
                 };
 
@@ -47,15 +56,13 @@ namespace Infrastructure.Repositories
                 _context.VideoJuegos.Add(video);
                 await _context.SaveChangesAsync(); // Guarda los cambios en la base de datos
 
-                return video; // Devuelve el videojuego registrado
+                return video; 
             }
             catch (Exception ex)
             {
-                // Captura cualquier excepción y lanza una nueva con el mensaje detallado
                 throw new Exception("Error al registrar el videojuego: " + ex.Message);
             }
         }
-
         // Método para listar videojuegos por medio de un procedimiento almacenado
         public async Task<List<VideoJuegosEntity>> ListarVideoJuegos()
         {
@@ -70,7 +77,6 @@ namespace Infrastructure.Repositories
             }
             catch (Exception ex)
             {
-                // Captura cualquier excepción y lanza una excepción personalizada con el mensaje de error
                 throw new BusinessException("Error al devolver la consulta: " + ex.Message);
             }
         }
@@ -94,7 +100,6 @@ namespace Infrastructure.Repositories
             }
             catch (Exception ex)
             {
-                // Captura cualquier excepción y lanza una nueva con el mensaje detallado
                 throw new BusinessException("Error al obtener el videojuego: " + ex.Message);
             }
         }

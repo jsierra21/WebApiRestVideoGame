@@ -18,12 +18,12 @@ namespace Core.Services
 
             try
             {
-                if (dto.Nombre != null)
+                if (dto.nombre != null)
                 {
                     VideoJuegosEntity result = await _unitOfWork.VideoJuegosRepository.RegistrarVideoJuego(dto);
 
                     response.Estado = 200;
-                    response.Mensaje = "Usuario registrado  exitosamente.";
+                    response.Mensaje = "Video juego registrado  exitosamente.";
                     return response;
 
                 }
