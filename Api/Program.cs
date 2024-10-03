@@ -98,9 +98,24 @@ builder.Services.AddSwaggerGen(options =>
     options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
 });
 
-builder.Services.AddSignalR(options =>
+// Configuración de Serilog
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Debug()
+    .WriteTo.Console() // o a un archivo, etc.
+    .CreateLogger();
+
+builder.Host.UseSerilog(); // Usa Serilog como el registrador
+
+
+// Configuración de CORS
+// Configurar CORS
+builder.Services.AddCors(options =>
 {
-    options.EnableDetailedErrors = true;
+    options.AddPolicy("ApiCors",
+        builder => builder
+            .AllowAnyOrigin() // Permitir cualquier origen
+            .AllowAnyHeader() // Permitir cualquier encabezado
+            .AllowAnyMethod()); // Permitir cualquier método (GET, POST, etc.)
 });
 
 builder.Services.AddHttpContextAccessor(); // Para poder utilizar HttpContext en ShouldBeAnAdminRequirementHandler
@@ -122,7 +137,6 @@ builder.Services.AddMvc();
 
 _ = bool.TryParse(builder.Configuration["ElasticConfig:Enabled"], out bool isEnabledElastic);
 
-SetElasticSerilog();
 
 var app = builder.Build();
 
@@ -131,17 +145,6 @@ if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
 }
-
-if (isEnabledElastic)
-{
-    // Para registrar cada solicitud HTTP
-    app.UseSerilogRequestLogging();
-}
-
-// Habilitamos los CORS
-app.UseCors("ApiCors");
-
-//app.UseHttpsRedirection();
 
 // Configuracion Swagger
 app.UseSwagger();
@@ -156,12 +159,12 @@ app.UseSwaggerUI(option =>
 
 // Version Net 5
 app.UseRouting();
-
+app.UseCors("ApiCors");
 // Configuracion JWT
 app.UseAuthentication();
 
 app.UseAuthorization();
-
+app.UseSerilogRequestLogging();
 // Configurar la ruta SOAP
 
 // Version Net 5
@@ -172,20 +175,3 @@ app.UseEndpoints(endpoints =>
 });
 
 app.Run();
-
-void SetElasticSerilog()
-{
-    string environment = builder.Environment.EnvironmentName;
-    string appsettingFile = $"appsettings.{environment}.json";
-
-    builder.Configuration.AddJsonFile(appsettingFile, optional: true, reloadOnChange: true);
-
-    if (isEnabledElastic)
-    {
-        builder.Services.AddElasticLogging(builder.Configuration, environment);
-
-        // Reemplazar el Logger por defecto con Serilog
-        builder.Host.UseSerilog();
-    }
-}
-

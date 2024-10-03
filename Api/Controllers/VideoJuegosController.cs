@@ -3,6 +3,7 @@ using Application.VideoStore.Queries;
 using Core.DTOs;
 using MediatR;
 using Microsoft.AspNetCore.Authorization; // Importar el espacio de nombres para autorización
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 
@@ -11,6 +12,7 @@ namespace Api.Controllers
     [Produces("application/json")]
     [Route("api/[controller]")]
     [ApiController]
+    [EnableCors("ApiCors")]
     [Authorize] // Asegura que todos los métodos requieren un token JWT
     public class VideoJuegosController : ControllerBase
     {
