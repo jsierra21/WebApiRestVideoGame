@@ -22,9 +22,10 @@ namespace Infrastructure.Repositories
         //private readonly IRepository<Entity> _userRepository; // Para entidades que sólo hacen CRUD
         private readonly IConfiguration _configuration;
         private readonly IUsuarioRepository _usuarioRepository;
-      
-        private readonly Dictionary<Type, object> _storeProcedureRepositories = new Dictionary<Type, object>();
+       // private readonly IAccountRepository _accoutRepository;
 
+
+        private readonly Dictionary<Type, object> _storeProcedureRepositories = new Dictionary<Type, object>();
 
 
         public UnitOfWork(DbModelContext context,IConfiguration configuration)
@@ -34,6 +35,7 @@ namespace Infrastructure.Repositories
         }
         public IUsuarioRepository UsuarioRepository => _usuarioRepository ?? new UsuarioRepository(_context);
 
+  //      public IAccountRepository AccountRepository => _accountRepository ?? new AccountRepository(_context);
 
         public void Dispose()
         {

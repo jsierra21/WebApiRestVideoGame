@@ -4,7 +4,9 @@ using FluentValidation.AspNetCore;
 using Infrastructure.Data;
 using Infrastructure.Extensions;
 using Infrastructure.Filters;
+using Infrastructure.Interfaces;
 using Infrastructure.Repositories;
+using Infrastructure.Services;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
@@ -89,6 +91,9 @@ builder.Services.AddDbContext<DbModelContext>(options =>
 
 builder.Services.AddTransient<IUsuarioService, UsuarioService>();
 builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddSingleton<IPasswordService, PasswordService>();
+
 
 // Configuracion para controlar Filtros del Request y las Validaciones de las entidades
 builder.Services.AddMvc();

@@ -1,12 +1,12 @@
 ﻿using Core.DTOs;
 using Core.Entities;
-using Core.Interfaces;
+using Core.Exceptions;
 using Core.Interfaces.usuario;
 using Infrastructure.Data;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Threading.Tasks;
+using System.Text;
 
 namespace Infrastructure.Repositories
 {
@@ -22,6 +22,7 @@ namespace Infrastructure.Repositories
         // Método para registrar usuario usando un procedimiento almacenado
         public async Task<UsuarioEntity> RegistrarUsuario(UsuarioDto dto)
         {
+
             try
             {
                 // Llamada al procedimiento almacenado con parámetros
@@ -53,5 +54,41 @@ namespace Infrastructure.Repositories
                 throw new Exception("Error al registrar el usuario: " + ex.Message);
             }
         }
+
+        public async Task<UsuarioEntity> GetLoginByCredentialsAut(AccountLogin dto)
+        {
+            try
+            {
+                // Parámetros para el procedimiento almacenado
+                var parameters = new[]
+                {
+                    new SqlParameter("@Usr_correo_electronico", dto.Correo),
+                    new SqlParameter("@Usr_Password", dto.Password)
+                };
+
+                // Ejecutar el procedimiento almacenado y evitar la composición del lado del servidor
+                var usuarios =  _context.Usuarios
+                    .FromSqlRaw("EXEC [dbo].[SpAutenticacion] @Usr_correo_electronico, @Usr_Password", parameters)
+                    .AsEnumerable() // Ejecuta el procedimiento y luego trabaja con los datos en memoria
+                    .ToList();
+
+                // Verificar si se encontraron resultados
+                var usuario = usuarios.FirstOrDefault();
+
+                if (usuario == null)
+                {
+                    throw new BusinessException("Credenciales inválidas");
+                }
+
+                return usuario; // Devuelve el usuario encontrado
+            }
+            catch (Exception ex)
+            {
+                // Manejar la excepción
+                throw new BusinessException("Error al autenticar el usuario: " + ex.Message);
+            }
+        }
+
+
     }
 }

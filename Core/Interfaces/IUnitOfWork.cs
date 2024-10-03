@@ -12,13 +12,13 @@ namespace Core.Interfaces
     {
         
         IUsuarioRepository UsuarioRepository { get; }
+       // IAccountRepository AccountRepository { get; }
 
-      //  IStoreProcedureRepository<T> StoreProcedure<T>() where T : class;
+        //  IStoreProcedureRepository<T> StoreProcedure<T>() where T : class;
 
 
         //SGD
-        #region Excel Generador Repositories
-        #endregion
+
         void SaveChanges();
         Task SaveChangesAsync();
     }

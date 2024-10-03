@@ -21,28 +21,20 @@ namespace Core.Services
             {
                 if (notificationModel.Correo_electronico != null)
                 {
-                    // Inicializar la conexión a Firebase
-                    // Construir el objeto a enviar en la notificación
-                    //  FirebaseMessage payload = ConstruirModeloNotificacion(notificationModel);
-
-                    // Enviar notificaciónnotificationModel
                     UsuarioEntity result = await _unitOfWork.UsuarioRepository.RegistrarUsuario(notificationModel);
 
                     response.Estado = 200;
-                    response.Mensaje = "Notificación enviada exitosamente.";
+                    response.Mensaje = "Usuario registrado  exitosamente.";
                     return response;
 
                 }
                 else
                 {
                     response.Estado = 400;
-                    response.Mensaje = "No se encontró un dispositivo válido.";
+                    response.Mensaje = "se ha generado un error no controlado en el servidor";
                     return response;
                 }
 
-                // Code here for APN Sender (iOS Device)
-                // var apn = new ApnSender(apnSettings, httpClient);
-                // await apn.SendAsync(notification, deviceToken);
             }
             catch (Exception ex)
             {
@@ -50,6 +42,11 @@ namespace Core.Services
                 response.Mensaje = ex.Message;
                 return response;
             }
+        }
+
+        public async Task<UsuarioEntity> GetLoginByCredentialsUsuario(AccountLogin login)
+        {
+            return await _unitOfWork.UsuarioRepository.GetLoginByCredentialsAut(login);
         }
 
     }

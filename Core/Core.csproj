@@ -32,7 +32,6 @@
 
   <ItemGroup>
     <Folder Include="CustomEntities\" />
-    <Folder Include="Enums\" />
     <Folder Include="Options\" />
     <Folder Include="Tools\" />
   </ItemGroup>

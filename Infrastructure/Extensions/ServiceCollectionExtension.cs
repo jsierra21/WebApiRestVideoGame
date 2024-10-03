@@ -69,19 +69,16 @@ namespace Infrastructure.Extensions
             return services;
         }
 
-        public static IServiceCollection AddServices(this IServiceCollection services)
+        /*public static IServiceCollection AddServices(this IServiceCollection services)
         {
-            // Inyección de Depencias
-            /* Suponiendo que cambiamos de motor de Base de Datos, este proceso nos facilita que
-             * no nos toque reestructurar el proyecto para acoplarlo a cada motor de Base de datos.
-             */
             services.AddTransient<IUnitOfWork, UnitOfWork>();
-
-
             services.AddScoped<IUsuarioService, UsuarioService>();
-          
+            services.AddScoped<IAccountService, AccountService>();
+
+
             return services;
         }
+        */
 
         public static IServiceCollection AddCorsApp(this IServiceCollection services)
         {
