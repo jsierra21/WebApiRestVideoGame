@@ -39,6 +39,24 @@ namespace Api.Controllers
             return Ok(result); 
         }
 
+        // Método para actualizar un videojuego
+        [HttpPut]
+        [Route("actualizar/{id}")]
+        public async Task<IActionResult> ActualizarVideoJuego(int id, [FromBody] VideoJuegosActualizarCommand command)
+        {
+            command.video_juego_id = id; // Asigna el ID del videojuego al comando
+
+            var result = await _mediator.Send(command); // Envía el comando de actualización
+
+            if (result.Estado == 400)
+            {
+                return BadRequest(result); // Devuelve un error 400 si falla
+            }
+
+            return Ok(result); // Devuelve el resultado si la actualización fue exitosa
+        }
+
+
         // Método para listar los videojuegos registrados con caché en memoria
         [HttpGet]
         [Route("listar")]

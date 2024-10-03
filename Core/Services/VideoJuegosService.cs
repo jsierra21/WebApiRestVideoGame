@@ -12,6 +12,18 @@ namespace Core.Services
             _unitOfWork = unitOfWork;
         }
 
+     
+
+        public async Task<List<VideoJuegosEntity>> ListarVideoJuegosService()
+        {
+            return await _unitOfWork.VideoJuegosRepository.ListarVideoJuegos();
+        }
+
+        public async Task<VideoJuegosEntity> ObtenerVideoJuegoPorIdService(int videojuegoID)
+        {
+            return await _unitOfWork.VideoJuegosRepository.ObtenerVideoJuegoPorIdService(videojuegoID);
+        }
+
         public async Task<ResponseDTO> RegistrarVideoJuegoService(VideoJuegosDto dto)
         {
             ResponseDTO response = new();
@@ -43,14 +55,36 @@ namespace Core.Services
             }
         }
 
-        public async Task<List<VideoJuegosEntity>> ListarVideoJuegosService()
-        {
-            return await _unitOfWork.VideoJuegosRepository.ListarVideoJuegos();
-        }
 
-        public async Task<VideoJuegosEntity> ObtenerVideoJuegoPorIdService(int videojuegoID)
+        public async Task<ResponseDTO> ActualizarVideoJuegoService(VideoJuegosActualizarDto dto)
         {
-            return await _unitOfWork.VideoJuegosRepository.ObtenerVideoJuegoPorIdService(videojuegoID);
+            ResponseDTO response = new();
+
+            try
+            {
+                if (dto.nombre != null)
+                {
+                    VideoJuegosEntity result = await _unitOfWork.VideoJuegosRepository.ActualizarVideoJuego(dto);
+
+                    response.Estado = 200;
+                    response.Mensaje = "Video juego actualizado exitosamente.";
+                    return response;
+
+                }
+                else
+                {
+                    response.Estado = 400;
+                    response.Mensaje = "se ha generado un error no controlado en el servidor";
+                    return response;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                response.Estado = 400;
+                response.Mensaje = ex.Message;
+                return response;
+            }
         }
 
     }

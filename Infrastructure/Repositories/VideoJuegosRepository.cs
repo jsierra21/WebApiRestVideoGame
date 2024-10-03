@@ -16,53 +16,7 @@ namespace Infrastructure.Repositories
             _context = context; // Inicializa el contexto de base de datos
         }
 
-        // Método para registrar un videojuego con validación de nombre único
-        public async Task<VideoJuegosEntity> RegistrarVideoJuego(VideoJuegosDto dto)
-        {
-            try
-            {
-                // Validar el DTO utilizando FluentValidation
-                var validator = new VideoJuegosDtoValidator();
-                var validationResult = await validator.ValidateAsync(dto);
-
-                if (!validationResult.IsValid)
-                {
-                    // Lanzar excepción si hay errores de validación
-                    throw new BusinessException(string.Join(", ", validationResult.Errors.Select(e => e.ErrorMessage)));
-                }
-
-                // Validar si el videojuego ya está registrado en la base de datos
-                var videoExistente = await _context.VideoJuegos
-                    .FirstOrDefaultAsync(v => v.Nombre == dto.nombre);
-
-                if (videoExistente != null)
-                {
-                    throw new BusinessException("El Videojuego ya está registrado.");
-                }
-
-                // Crear una nueva entidad de videojuego con los datos del DTO
-                var video = new VideoJuegosEntity
-                {
-                    Nombre = dto.nombre,
-                    Compania = dto.compania,
-                    AnioLanzamiento = dto.anio_lanzamiento,
-                    Precio = dto.precio,
-                    PuntajePromedio = dto.puntaje_promedio, // Valor inicial por defecto para puntaje promedio
-                    Usuario = dto.usuario, // Usuario que registra el videojuego
-                    FechaActualizacion = DateTime.Now // Asigna la fecha y hora actual
-                };
-
-                // Añadir el nuevo videojuego al contexto de la base de datos
-                _context.VideoJuegos.Add(video);
-                await _context.SaveChangesAsync(); // Guarda los cambios en la base de datos
-
-                return video; 
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Error al registrar el videojuego: " + ex.Message);
-            }
-        }
+      
         // Método para listar videojuegos por medio de un procedimiento almacenado
         public async Task<List<VideoJuegosEntity>> ListarVideoJuegos()
         {
@@ -103,5 +57,96 @@ namespace Infrastructure.Repositories
                 throw new BusinessException("Error al obtener el videojuego: " + ex.Message);
             }
         }
+
+        // Método para registrar un videojuego con validación de nombre único
+        public async Task<VideoJuegosEntity> RegistrarVideoJuego(VideoJuegosDto dto)
+        {
+            try
+            {
+                // Validar el DTO utilizando FluentValidation
+                var validator = new VideoJuegosDtoValidator();
+                var validationResult = await validator.ValidateAsync(dto);
+
+                if (!validationResult.IsValid)
+                {
+                    // Lanzar excepción si hay errores de validación
+                    throw new BusinessException(string.Join(", ", validationResult.Errors.Select(e => e.ErrorMessage)));
+                }
+
+                // Validar si el videojuego ya está registrado en la base de datos
+                var videoExistente = await _context.VideoJuegos
+                    .FirstOrDefaultAsync(v => v.Nombre == dto.nombre);
+
+                if (videoExistente != null)
+                {
+                    throw new BusinessException("El Videojuego ya está registrado.");
+                }
+
+                // Crear una nueva entidad de videojuego con los datos del DTO
+                var video = new VideoJuegosEntity
+                {
+                    Nombre = dto.nombre,
+                    Compania = dto.compania,
+                    AnioLanzamiento = dto.anio_lanzamiento,
+                    Precio = dto.precio,
+                    PuntajePromedio = dto.puntaje_promedio, // Valor inicial por defecto para puntaje promedio
+                    Usuario = dto.usuario, // Usuario que registra el videojuego
+                    FechaActualizacion = DateTime.Now // Asigna la fecha y hora actual
+                };
+
+                // Añadir el nuevo videojuego al contexto de la base de datos
+                _context.VideoJuegos.Add(video);
+                await _context.SaveChangesAsync(); // Guarda los cambios en la base de datos
+
+                return video;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al registrar el videojuego: " + ex.Message);
+            }
+        }
+
+        public async Task<VideoJuegosEntity> ActualizarVideoJuego(VideoJuegosActualizarDto dto)
+        {
+            try
+            {
+                // Validar el DTO utilizando FluentValidation
+                var validator = new VideoJuegosActualizarDtoValidator();
+                var validationResult = await validator.ValidateAsync(dto);
+
+                if (!validationResult.IsValid)
+                {
+                    throw new BusinessException(string.Join(", ", validationResult.Errors.Select(e => e.ErrorMessage)));
+                }
+
+                // Buscar el videojuego existente en la base de datos
+                var videojuegoExistente = await _context.VideoJuegos
+                    .FirstOrDefaultAsync(v => v.VideojuegoID == dto.video_juego_id); // Asegúrate de que dto tenga VideojuegoID
+
+                if (videojuegoExistente == null)
+                {
+                    throw new BusinessException("El Videojuego no se encontró.");
+                }
+
+                // Actualizar los campos del videojuego existente
+                videojuegoExistente.Nombre = dto.nombre;
+                videojuegoExistente.Compania = dto.compania;
+                videojuegoExistente.AnioLanzamiento = dto.anio_lanzamiento;
+                videojuegoExistente.Precio = dto.precio;
+                videojuegoExistente.PuntajePromedio = dto.puntaje_promedio; // Este puede ser actualizado según la lógica de negocio
+                videojuegoExistente.Usuario = dto.usuario; // Asignar el usuario que actualiza
+                videojuegoExistente.FechaActualizacion = DateTime.Now; // Asigna la fecha y hora actual
+
+                // Guardar los cambios en la base de datos
+                await _context.SaveChangesAsync();
+
+                return videojuegoExistente; // Devuelve el videojuego actualizado
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al actualizar el videojuego: " + ex.Message);
+            }
+        }
+
     }
 }
