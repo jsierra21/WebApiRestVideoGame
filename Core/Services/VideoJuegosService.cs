@@ -1,5 +1,6 @@
 ﻿using Core.DTOs;
 using Core.Interfaces;
+using Core.Interfaces.store;
 
 namespace Core.Services
 {
@@ -68,6 +69,37 @@ namespace Core.Services
 
                     response.Estado = 200;
                     response.Mensaje = "Video juego actualizado exitosamente.";
+                    return response;
+
+                }
+                else
+                {
+                    response.Estado = 400;
+                    response.Mensaje = "se ha generado un error no controlado en el servidor";
+                    return response;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                response.Estado = 400;
+                response.Mensaje = ex.Message;
+                return response;
+            }
+        }
+
+        public async Task<ResponseDTO> EliminarVideoJuegoService(int videojuegoID)
+        {
+            ResponseDTO response = new();
+
+            try
+            {
+                if (videojuegoID != 0)
+                {
+                    VideoJuegosEntity result = await _unitOfWork.VideoJuegosRepository.EliminarVideoJuego(videojuegoID);
+
+                    response.Estado = 200;
+                    response.Mensaje = "Video juego eliminado exitosamente.";
                     return response;
 
                 }

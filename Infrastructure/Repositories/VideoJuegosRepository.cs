@@ -148,5 +148,22 @@ namespace Infrastructure.Repositories
             }
         }
 
+        public async Task<VideoJuegosEntity> EliminarVideoJuego(int videojuegoID)
+        {
+            var videojuego = await _context.VideoJuegos
+                .FirstOrDefaultAsync(v => v.VideojuegoID == videojuegoID);
+
+            if (videojuego == null)
+            {
+                throw new BusinessException("El Videojuego no se encontró.");
+            }
+
+            _context.VideoJuegos.Remove(videojuego);
+            await _context.SaveChangesAsync();
+
+            return videojuego; // Devuelve el videojuego eliminado
+        }
+
+
     }
 }

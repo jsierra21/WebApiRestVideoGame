@@ -10,6 +10,7 @@ namespace Core.Interfaces.store
         Task<VideoJuegosEntity> ObtenerVideoJuegoPorIdService(int videojuegoID);
         Task<VideoJuegosEntity> RegistrarVideoJuego(VideoJuegosDto video); // Acepta un objeto UsuarioEntity como parámetro
         Task<VideoJuegosEntity> ActualizarVideoJuego(VideoJuegosActualizarDto video); // Acepta un objeto UsuarioEntity como parámetro
+        Task<VideoJuegosEntity> EliminarVideoJuego(int videojuegoID); // Acepta un objeto UsuarioEntity como parámetro
 
 
     }
