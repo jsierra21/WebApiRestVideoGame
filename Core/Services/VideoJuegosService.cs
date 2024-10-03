@@ -31,14 +31,26 @@ namespace Core.Services
 
             try
             {
+                // Valida el dto según tu lógica (por ejemplo, que todos los campos requeridos estén presentes)
+                if (dto == null || string.IsNullOrWhiteSpace(dto.nombre) || dto.anio_lanzamiento <= 0)
+                {
+                    return new ResponseDTO { Estado = 400, Mensaje = "Datos inválidos." };
+                }
+
                 if (dto.nombre != null)
                 {
                     VideoJuegosEntity result = await _unitOfWork.VideoJuegosRepository.RegistrarVideoJuego(dto);
-
-                    response.Estado = 200;
-                    response.Mensaje = "Video juego registrado  exitosamente.";
-                    return response;
-
+                    if (result.Nombre.Length > 0)
+                    {
+                        response.Estado = 200;
+                        response.Mensaje = "Video juego registrado  exitosamente.";
+                        return response;
+                    }
+                    else {
+                        response.Estado = 400;
+                        response.Mensaje = "se ha generado un error no controlado en el servidor";
+                        return response;
+                    }
                 }
                 else
                 {
@@ -46,7 +58,6 @@ namespace Core.Services
                     response.Mensaje = "se ha generado un error no controlado en el servidor";
                     return response;
                 }
-
             }
             catch (Exception ex)
             {
@@ -66,11 +77,18 @@ namespace Core.Services
                 if (dto.nombre != null)
                 {
                     VideoJuegosEntity result = await _unitOfWork.VideoJuegosRepository.ActualizarVideoJuego(dto);
-
-                    response.Estado = 200;
-                    response.Mensaje = "Video juego actualizado exitosamente.";
-                    return response;
-
+                    if (result.Nombre.Length > 0)
+                    {
+                        response.Estado = 200;
+                        response.Mensaje = "Video juego actualizado exitosamente.";
+                        return response;
+                    }
+                    else
+                    {
+                        response.Estado = 400;
+                        response.Mensaje = "se ha generado un error no controlado en el servidor";
+                        return response;
+                    }
                 }
                 else
                 {
