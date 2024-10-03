@@ -3,11 +3,11 @@ using MediatR;
 
 namespace Application.VideoStore.Queries
 {
-    public class ListarVideoJuegosCommandHandler : IRequestHandler<ListarVideoJuegosQuery, List<VideoJuegosEntity>>
+    public class VideoJuegosListarCommandHandler : IRequestHandler<ListarVideoJuegosQuery, List<VideoJuegosEntity>>
     {
         private readonly IVideoJuegosService _videojuegosService;
 
-        public ListarVideoJuegosCommandHandler(IVideoJuegosService videojuegosService)
+        public VideoJuegosListarCommandHandler(IVideoJuegosService videojuegosService)
         {
             _videojuegosService = videojuegosService;
         }

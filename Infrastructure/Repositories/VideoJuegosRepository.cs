@@ -164,6 +164,50 @@ namespace Infrastructure.Repositories
             return videojuego; // Devuelve el videojuego eliminado
         }
 
+        public async Task<PaginacionResponse<VideoJuegosEntity>> ListarVideoJuegosPaginados(int pageNumber, int pageSize)
+        {
+            try
+            {
+                // Total de registros en la base de datos
+                var totalCount = await _context.VideoJuegos.CountAsync();
+
+                // Total de páginas
+                var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
+
+                // Verificar si la página actual tiene registros
+                var hasNextPage = pageNumber < totalPages;
+                var hasPreviousPage = pageNumber > 1;
+
+                // Obtener los registros de la página actual
+                var items = await _context.VideoJuegos
+                    .Skip((pageNumber - 1) * pageSize) // Saltar los registros de las páginas anteriores
+                    .Take(pageSize) // Tomar solo el tamaño de página especificado
+                    .ToListAsync();
+
+                // Crear la respuesta de paginación
+                return new PaginacionResponse<VideoJuegosEntity>
+                {
+                    TotalCount = totalCount,
+                    PageSize = pageSize,
+                    CurrentPage = pageNumber,
+                    TotalPages = totalPages,
+                    HasNextPage = hasNextPage,
+                    HasPreviousPage = hasPreviousPage,
+                    Items = items
+                };
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al obtener los videojuegos paginados: " + ex.Message);
+            }
+        }
+
+
+        public async Task<int> CountVideoJuegos()
+        {
+            return await _context.VideoJuegos.CountAsync(); // Cuenta el total de videojuegos en la base de datos
+        }
+
 
     }
 }

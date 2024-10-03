@@ -119,5 +119,19 @@ namespace Core.Services
             }
         }
 
+        public async Task<int> CountVideoJuegos()
+        {
+            return await _unitOfWork.VideoJuegosRepository.CountVideoJuegos(); // Método que contar videojuegos en el repositorio
+        }
+
+        public async Task<PaginacionResponse<VideoJuegosEntity>> ListarVideoJuegosPaginados(int pagina, int registrosPorPagina)
+        {
+            // Llama al repositorio para obtener la respuesta de paginación
+            var resultado = await _unitOfWork.VideoJuegosRepository.ListarVideoJuegosPaginados(pagina, registrosPorPagina);
+            return resultado; // Devuelve la respuesta de paginación
+        }
+
+
+
     }
 }

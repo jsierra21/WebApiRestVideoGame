@@ -1,5 +1,6 @@
 ﻿using Application.VideoStore.Commands;
 using Application.VideoStore.Queries; // Importar la consulta
+using Core.DTOs;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
@@ -117,5 +118,19 @@ namespace Api.Controllers
 
             return Ok(result); // Devuelve el videojuego eliminado
         }
+
+        [HttpGet]
+        [Route("listar/paginado")]
+        public async Task<IActionResult> ListarVideoJuegosPaginados([FromQuery] PaginacionDto paginacionDto)
+        {
+            var result = await _mediator.Send(new ConsultaPaginadaVideoJuegosQuery
+            {
+                Pagina = paginacionDto.Pagina,
+                RegistrosPorPagina = paginacionDto.RegistrosPorPagina
+            });
+
+            return Ok(result);
+        }
+
     }
 }
