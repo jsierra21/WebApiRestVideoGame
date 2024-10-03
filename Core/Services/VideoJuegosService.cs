@@ -72,39 +72,21 @@ namespace Core.Services
         {
             ResponseDTO response = new();
 
-            try
+            if (dto == null || dto.video_juego_id <= 0 || string.IsNullOrWhiteSpace(dto.nombre))
             {
-                if (dto.nombre != null)
-                {
-                    VideoJuegosEntity result = await _unitOfWork.VideoJuegosRepository.ActualizarVideoJuego(dto);
-                    if (result.Nombre.Length > 0)
-                    {
-                        response.Estado = 200;
-                        response.Mensaje = "Video juego actualizado exitosamente.";
-                        return response;
-                    }
-                    else
-                    {
-                        response.Estado = 400;
-                        response.Mensaje = "se ha generado un error no controlado en el servidor";
-                        return response;
-                    }
-                }
-                else
-                {
-                    response.Estado = 400;
-                    response.Mensaje = "se ha generado un error no controlado en el servidor";
-                    return response;
-                }
+                return new ResponseDTO { Estado = 400, Mensaje = "Datos inválidos." };
+            }
 
-            }
-            catch (Exception ex)
+            VideoJuegosEntity result = await _unitOfWork.VideoJuegosRepository.ActualizarVideoJuego(dto);
+
+            if (result == null)
             {
-                response.Estado = 400;
-                response.Mensaje = ex.Message;
-                return response;
+                return new ResponseDTO { Estado = 404, Mensaje = "El videojuego no existe." };
             }
+
+            return new ResponseDTO { Estado = 200, Mensaje = "Videojuego actualizado exitosamente." };
         }
+
 
         public async Task<ResponseDTO> EliminarVideoJuegoService(int videojuegoID)
         {
