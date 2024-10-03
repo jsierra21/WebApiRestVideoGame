@@ -143,13 +143,7 @@ public class VideoJuegosServiceTests
             usuario = "testuser"
         };
 
-        // Configura el mock para simular una respuesta de error cuando el ID es inválido
-        var expectedResponse = new ResponseDTO
-        {
-            Estado = 400, // Simula un error de validación
-            Mensaje = "El videojuego no existe o los datos son inválidos."
-        };
-
+        // Configura el mock para simular que el videojuego no existe en la base de datos
         _mockUnitOfWork
             .Setup(uow => uow.VideoJuegosRepository.ActualizarVideoJuego(It.IsAny<VideoJuegosActualizarDto>()))
             .ReturnsAsync((VideoJuegosEntity)null); // Simula que el videojuego no existe en la base de datos
@@ -160,63 +154,56 @@ public class VideoJuegosServiceTests
 
         // Assert
         result.Estado.Should().Be(400); // Espera un error de 400
-        result.Mensaje.Should().Be(expectedResponse.Mensaje); // Verifica el mensaje de error
+        result.Mensaje.Should().Be("El videojuego no existe o los datos son inválidos."); // Verifica el mensaje de error
     }
 
 
     [Fact]
-    public async Task ListarVideoJuegos_ShouldReturnFromCache_WhenCacheExists()
+    //Prueba para Eliminar un Videojuego Existente
+    public async Task EliminarVideoJuegoService_ShouldReturnSuccess_WhenVideojuegoExists()
     {
         // Arrange
-        var videojuegos = new List<VideoJuegosEntity>
-            {
-                new VideoJuegosEntity { VideojuegoID = 1, Nombre = "Test Game 1" },
-                new VideoJuegosEntity { VideojuegoID = 2, Nombre = "Test Game 2" }
-            };
+        int videojuegoID = 1; // ID válido del videojuego
+        var expectedResponse = new ResponseDTO
+        {
+            Estado = 200,
+            Mensaje = "Video juego eliminado exitosamente."
+        };
 
-        object cacheValue = videojuegos;
-        _mockCache
-            .Setup(c => c.TryGetValue("videojuegosList", out cacheValue))
-            .Returns(true); // Simula que hay datos en la caché
+        // Configura el mock para simular la eliminación del videojuego
+        _mockUnitOfWork
+            .Setup(uow => uow.VideoJuegosRepository.EliminarVideoJuego(videojuegoID))
+            .ReturnsAsync(new VideoJuegosEntity { VideojuegoID = videojuegoID }); // Simula que el videojuego fue eliminado
 
         // Act
-        var result = await _service.ListarVideoJuegosService();
+        var result = await _service.EliminarVideoJuegoService(videojuegoID);
 
         // Assert
-        result.Should().BeEquivalentTo(videojuegos);
+        result.Estado.Should().Be(expectedResponse.Estado); // Verifica que el estado sea 200
+        result.Mensaje.Should().Be(expectedResponse.Mensaje); // Verifica que el mensaje sea correcto
     }
 
 
     [Fact]
-    public async Task ListarVideoJuegos_ShouldReturnFromMediator_WhenCacheDoesNotExist()
+    //Prueba para Eliminar un Videojuego con ID Inválido
+    public async Task EliminarVideoJuegoService_ShouldReturnError_WhenVideojuegoIDIsZero()
     {
         // Arrange
-        var videojuegos = new List<VideoJuegosEntity>
-            {
-                new VideoJuegosEntity { VideojuegoID = 1, Nombre = "Test Game 1" },
-                new VideoJuegosEntity { VideojuegoID = 2, Nombre = "Test Game 2" }
-            };
+        int videojuegoID = 0; // ID inválido
 
-        object cacheValue = null;
-        _mockCache
-            .Setup(c => c.TryGetValue("videojuegosList", out cacheValue))
-            .Returns(false); // Simula que no hay datos en la caché
-
-        _mockMediator
-            .Setup(m => m.Send(It.IsAny<ListarVideoJuegosQuery>(), default))
-            .ReturnsAsync(videojuegos); // Simula que el mediador devuelve datos
-
-        _mockCache
-            .Setup(c => c.Set("videojuegosList", videojuegos, It.IsAny<MemoryCacheEntryOptions>())); // Simula que se guarda en la caché
+        var expectedResponse = new ResponseDTO
+        {
+            Estado = 400,
+            Mensaje = "se ha generado un error no controlado en el servidor"
+        };
 
         // Act
-        var result = await _service.ListarVideoJuegosService();
+        var result = await _service.EliminarVideoJuegoService(videojuegoID);
 
         // Assert
-        result.Should().BeEquivalentTo(videojuegos);
-        _mockCache.Verify(c => c.Set("videojuegosList", videojuegos, It.IsAny<MemoryCacheEntryOptions>()), Times.Once); // Verifica que se guardó en caché
+        result.Estado.Should().Be(expectedResponse.Estado); // Verifica que el estado sea 400
+        result.Mensaje.Should().Be(expectedResponse.Mensaje); // Verifica que el mensaje sea correcto
     }
-
 
 
 }

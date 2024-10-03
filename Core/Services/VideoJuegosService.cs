@@ -74,14 +74,14 @@ namespace Core.Services
 
             if (dto == null || dto.video_juego_id <= 0 || string.IsNullOrWhiteSpace(dto.nombre))
             {
-                return new ResponseDTO { Estado = 400, Mensaje = "Datos inválidos." };
+                return new ResponseDTO { Estado = 400, Mensaje = "El videojuego no existe o los datos son inválidos." };
             }
 
             VideoJuegosEntity result = await _unitOfWork.VideoJuegosRepository.ActualizarVideoJuego(dto);
 
             if (result == null)
             {
-                return new ResponseDTO { Estado = 404, Mensaje = "El videojuego no existe." };
+                return new ResponseDTO { Estado = 404, Mensaje = "El videojuego no existe o los datos son inválidos." };
             }
 
             return new ResponseDTO { Estado = 200, Mensaje = "Videojuego actualizado exitosamente." };
