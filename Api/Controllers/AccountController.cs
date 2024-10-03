@@ -18,21 +18,19 @@ namespace Api.Controllers
     [ApiController]
     public class AccountController : ControllerBase
     {
-        private readonly IAccountService _accountService;
         private readonly IMapper _mapper;
         private readonly IConfiguration _configuration;
         private readonly IPasswordService _passwordService;
         private readonly IUsuarioService _usuarioService;
 
 
-        public AccountController(IAccountService accountService,
-             IMapper mapper,
-             IConfiguration configuration,
+        public AccountController(
+              IMapper mapper,
+              IConfiguration configuration,
               IPasswordService passwordService,
               IUsuarioService usuarioService
             )
         {
-            _accountService = accountService;
             _mapper = mapper;
             _configuration = configuration;
             _passwordService = passwordService;

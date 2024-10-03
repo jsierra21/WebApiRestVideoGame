@@ -91,7 +91,6 @@ builder.Services.AddDbContext<DbModelContext>(options =>
 
 builder.Services.AddTransient<IUsuarioService, UsuarioService>();
 builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
-builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddSingleton<IPasswordService, PasswordService>();
 
 

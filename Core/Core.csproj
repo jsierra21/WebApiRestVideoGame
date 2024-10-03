@@ -32,8 +32,6 @@
 
   <ItemGroup>
     <Folder Include="CustomEntities\" />
-    <Folder Include="Options\" />
-    <Folder Include="Tools\" />
   </ItemGroup>
 
 </Project>
