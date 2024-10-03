@@ -89,9 +89,10 @@ builder.Services.AddHttpContextAccessor(); // Para poder utilizar HttpContext en
 builder.Services.AddDbContext<DbModelContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("SQLEntities")));
 
-builder.Services.AddTransient<IUsuarioService, UsuarioService>();
 builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 builder.Services.AddSingleton<IPasswordService, PasswordService>();
+builder.Services.AddTransient<IUsuarioService, UsuarioService>();
+builder.Services.AddTransient<IVideoJuegosService, VideoJuegosService>();
 
 
 // Configuracion para controlar Filtros del Request y las Validaciones de las entidades

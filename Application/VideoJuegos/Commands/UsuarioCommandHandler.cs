@@ -3,7 +3,7 @@ using Core.DTOs;
 using Core.Interfaces;
 using MediatR;
 
-namespace Application.PushNotification.Commands
+namespace Application.VideoStore.Commands
 {
     public class UsuarioCommandHandler(
         IUsuarioService usuarioService,

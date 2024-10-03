@@ -14,81 +14,89 @@ namespace Infrastructure.Repositories
     {
         private readonly DbModelContext _context;
 
+        // Constructor que inyecta el contexto de base de datos
         public UsuarioRepository(DbModelContext context)
         {
             _context = context;
         }
 
-        // Método para registrar usuario usando un procedimiento almacenado
+        // Método para registrar usuario con validación de correo único
         public async Task<UsuarioEntity> RegistrarUsuario(UsuarioDto dto)
         {
-
             try
             {
-                // Llamada al procedimiento almacenado con parámetros
+                // Validar si el correo ya está registrado
+                var usuarioExistente = await _context.Usuarios
+                    .FirstOrDefaultAsync(u => u.CorreoElectronico == dto.Correo_electronico);
+
+                // Si se encuentra un usuario con el mismo correo, lanzar excepción
+                if (usuarioExistente != null)
+                {
+                    throw new BusinessException("El correo electrónico ya está registrado.");
+                }
+
+                // Configurar los parámetros del procedimiento almacenado con los valores del DTO
                 var parameters = new[]
                 {
-                    new SqlParameter("@Usr_nombre_usuario", dto.Nombre_usuario),
-                    new SqlParameter("@Usr_correo_electronico", dto.Correo_electronico),
-                    new SqlParameter("@Usr_Password", dto.Password)
-                    // Agrega más parámetros según tu lógica
+                    new SqlParameter("@Usr_nombre_usuario", dto.Nombre_usuario),   // Nombre del usuario
+                    new SqlParameter("@Usr_correo_electronico", dto.Correo_electronico), // Correo electrónico del usuario
+                    new SqlParameter("@Usr_Password", dto.Password)   // Contraseña del usuario
                 };
 
-                // Ejecutar el procedimiento almacenado
+                // Ejecutar el procedimiento almacenado para registrar el usuario
                 await _context.Database.ExecuteSqlRawAsync("EXEC [dbo].[RegistrarUserSp] @Usr_nombre_usuario, @Usr_correo_electronico, @Usr_Password", parameters);
 
-                // Crear y devolver un nuevo UsuarioEntity
+                // Crear y devolver una nueva instancia de UsuarioEntity
                 var usuario = new UsuarioEntity
                 {
-                    NombreUsuario = dto.Nombre_usuario,
-                    CorreoElectronico = dto.Correo_electronico,
-                    Password = dto.Password,
-                    // Asigna otros campos si es necesario
+                    NombreUsuario = dto.Nombre_usuario,   // Asignar el nombre del usuario
+                    CorreoElectronico = dto.Correo_electronico, // Asignar el correo electrónico
+                    Password = dto.Password,  // Asignar la contraseña
                 };
 
                 return usuario; // Devuelve el usuario registrado
             }
             catch (Exception ex)
             {
-                // Maneja la excepción (puedes registrar el error o lanzar una excepción personalizada)
+                // Captura cualquier excepción y lanza una nueva con el mensaje detallado
                 throw new Exception("Error al registrar el usuario: " + ex.Message);
             }
         }
 
+        // Método para obtener un usuario por sus credenciales usando un procedimiento almacenado de autenticación
         public async Task<UsuarioEntity> GetLoginByCredentialsAut(AccountLogin dto)
         {
             try
             {
-                // Parámetros para el procedimiento almacenado
+                // Configurar los parámetros del procedimiento almacenado con las credenciales del DTO (Correo y Contraseña)
                 var parameters = new[]
                 {
-                    new SqlParameter("@Usr_correo_electronico", dto.Correo),
-                    new SqlParameter("@Usr_Password", dto.Password)
+                    new SqlParameter("@Usr_correo_electronico", dto.Correo),   // Correo electrónico del usuario
+                    new SqlParameter("@Usr_Password", dto.Password)   // Contraseña del usuario
                 };
 
-                // Ejecutar el procedimiento almacenado y evitar la composición del lado del servidor
-                var usuarios =  _context.Usuarios
-                    .FromSqlRaw("EXEC [dbo].[SpAutenticacion] @Usr_correo_electronico, @Usr_Password", parameters)
-                    .AsEnumerable() // Ejecuta el procedimiento y luego trabaja con los datos en memoria
-                    .ToList();
+                // Ejecutar el procedimiento almacenado para autenticar al usuario y convertir los resultados en una lista
+                var usuarios = _context.Usuarios
+                    .FromSqlRaw("EXEC [dbo].[SpAutenticacion] @Usr_correo_electronico, @Usr_Password", parameters) // Ejecuta el procedimiento
+                    .AsEnumerable()   // Carga los resultados en memoria para evitar problemas de composición de consultas
+                    .ToList();  // Convertir los resultados a una lista
 
-                // Verificar si se encontraron resultados
+                // Tomar el primer usuario de la lista de resultados
                 var usuario = usuarios.FirstOrDefault();
 
+                // Si no se encontró ningún usuario, lanzar una excepción personalizada
                 if (usuario == null)
                 {
                     throw new BusinessException("Credenciales inválidas");
                 }
 
-                return usuario; // Devuelve el usuario encontrado
+                return usuario; // Devuelve el usuario autenticado si las credenciales son válidas
             }
             catch (Exception ex)
             {
-                // Manejar la excepción
+                // Captura cualquier excepción durante la autenticación y lanza una excepción personalizada con el mensaje de error
                 throw new BusinessException("Error al autenticar el usuario: " + ex.Message);
             }
         }
-
-
     }
 }

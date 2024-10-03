@@ -1,4 +1,5 @@
 ﻿using Core.Interfaces;
+using Core.Interfaces.store;
 using Core.Interfaces.usuario;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -22,8 +23,7 @@ namespace Infrastructure.Repositories
         //private readonly IRepository<Entity> _userRepository; // Para entidades que sólo hacen CRUD
         private readonly IConfiguration _configuration;
         private readonly IUsuarioRepository _usuarioRepository;
-       // private readonly IAccountRepository _accoutRepository;
-
+        private readonly IVideoJuegosRepository _videoJuegosRepository;
 
         private readonly Dictionary<Type, object> _storeProcedureRepositories = new Dictionary<Type, object>();
 
@@ -34,8 +34,9 @@ namespace Infrastructure.Repositories
             _configuration = configuration;
         }
         public IUsuarioRepository UsuarioRepository => _usuarioRepository ?? new UsuarioRepository(_context);
+        public IVideoJuegosRepository VideoJuegosRepository => _videoJuegosRepository ?? new VideoJuegosRepository(_context);
 
-  //      public IAccountRepository AccountRepository => _accountRepository ?? new AccountRepository(_context);
+        //      public IAccountRepository AccountRepository => _accountRepository ?? new AccountRepository(_context);
 
         public void Dispose()
         {

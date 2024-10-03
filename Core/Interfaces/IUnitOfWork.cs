@@ -1,6 +1,7 @@
 ﻿
 namespace Core.Interfaces
 {
+    using Core.Interfaces.store;
     using Core.Interfaces.usuario;
     using System;
     using System.Threading.Tasks;
@@ -12,12 +13,7 @@ namespace Core.Interfaces
     {
         
         IUsuarioRepository UsuarioRepository { get; }
-       // IAccountRepository AccountRepository { get; }
-
-        //  IStoreProcedureRepository<T> StoreProcedure<T>() where T : class;
-
-
-        //SGD
+        IVideoJuegosRepository VideoJuegosRepository { get; }
 
         void SaveChanges();
         Task SaveChangesAsync();

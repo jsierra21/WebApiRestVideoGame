@@ -1,9 +1,9 @@
-﻿using Application.PushNotification.Commands;
+﻿using Application.VideoStore.Commands;
 using AutoMapper;
 using Core.DTOs;
 using Core.Entities;
 
-namespace Application.SQLContext.PushNotification.Mapping
+namespace Application.SQLContext.VideoStore.Mapping
 {
     internal class PerfilMapper : Profile
     {
@@ -15,6 +15,14 @@ namespace Application.SQLContext.PushNotification.Mapping
 
             // Si necesitas mapear en la dirección inversa (de UsuarioDto a UsuarioEntity)
             CreateMap<UsuarioDto, UsuarioEntity>();
+
+
+            CreateMap<VideoJuegosCommand, VideoJuegosDto>().ReverseMap();
+            // Configura el mapeo entre UsuarioEntity y UsuarioDto
+            CreateMap<VideoJuegosEntity, VideoJuegosDto>();
+
+            // Si necesitas mapear en la dirección inversa (de UsuarioDto a UsuarioEntity)
+            CreateMap<VideoJuegosDto, VideoJuegosEntity>();
         }
     }
 }

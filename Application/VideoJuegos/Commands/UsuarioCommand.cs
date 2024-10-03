@@ -2,7 +2,7 @@
 using MediatR;
 using Newtonsoft.Json;
 
-namespace Application.PushNotification.Commands
+namespace Application.VideoStore.Commands
 {
     public class UsuarioCommand : IRequest<ResponseDTO>
     {
